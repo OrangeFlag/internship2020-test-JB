@@ -1,9 +1,16 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 data class Point(val latitude: Float, val longitude: Float)
+
+fun Point.distance(end: Point): Float {
+    return sqrt((end.latitude - this.latitude).pow(2) + (end.longitude - this.longitude).pow(2))
+}
+
 data class Participants(val passengers: Collection<Person>, val drivers: Collection<Person>)
 data class Person(val id: UUID, val finishPoint: Point)
 
@@ -19,7 +26,7 @@ fun main() {
 }
 
 fun suggestDrivers(passenger: Person, drivers: Collection<Person>): Collection<Person> {
-    TODO("Implement me")
+    return drivers.sortedWith(compareBy { passenger.finishPoint.distance(it.finishPoint) })
 }
 
 private fun readPoints(): Participants {
