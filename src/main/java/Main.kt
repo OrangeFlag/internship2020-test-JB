@@ -1,14 +1,23 @@
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
-data class Point(val latitude: Float, val longitude: Float)
+data class Point(val latitude: Float, val longitude: Float) {
+    private val r = 6360; // geocentric radius in SPB
 
-fun Point.distance(end: Point): Float {
-    return sqrt((end.latitude - this.latitude).pow(2) + (end.longitude - this.longitude).pow(2))
+    fun distance(end: Point): Float {
+        val dLat = (end.latitude - this.latitude).toRadians();
+        val dLon = (end.longitude - this.longitude).toRadians();
+        val a = sin(dLat / 2).pow(2) +
+                cos(this.latitude.toRadians()) * cos(end.latitude.toRadians()) * sin(dLon / 2).pow(2)
+        return (2 * r * asin(sqrt(a))).toFloat(); // distance in km
+    }
+}
+
+fun Float.toRadians(): Double {
+    return this * (Math.PI / 180)
 }
 
 data class Participants(val passengers: Collection<Person>, val drivers: Collection<Person>)
